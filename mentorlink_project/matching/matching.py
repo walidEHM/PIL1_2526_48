@@ -24,5 +24,13 @@ def preparer_horaires ( horaires_mentor, horaire_mentore):
    if crenaux_mentore == 0
        score_horaires = 0
    else:
-   score_horaires = ( crenaux_communs / crenaux_mentore) * 100
-    
+       score_horaires = ( crenaux_communs / crenaux_mentore) * 100
+  
+    score_filiere = 100 if meme_filiere else 0
+    score_niveau = 100 / ( 2** ecart_niveau)
+
+    score_final = (
+         (score_competences* 0.60)
+        +( score_horaires* 0.20 )
+        + ( score_filiere * 0.10)
+        + ( score_niveau * 0.10)
