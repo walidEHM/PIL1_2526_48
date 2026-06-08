@@ -1,1 +1,188 @@
 <!---Template de base--->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IFRI MentorLink — Mon Profil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🔗</div>
+    <div class="logo-text">IFRI_<span>MentorLink</span></div>
+  </div>
+  <div class="nav-section-title" style="margin-bottom:10px">Navigation</div>
+  <a class="nav-item" href="#"><span class="icon">🏠</span> Accueil</a>
+  <a class="nav-item" href="#"><span class="icon">🔍</span> Trouver un mentor</a>
+  <a class="nav-item" href="#"><span class="icon">💬</span> Messagerie</a>
+  <a class="nav-item" href="#"><span class="icon">🤝</span> Mes sessions</a>
+  <a class="nav-item active" href="#"><span class="icon">👤</span> Mon profil</a>
+  <div class="sidebar-bottom">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">JD</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name">John Doe</div>
+        <div class="sidebar-user-role">GL • L2</div>
+      </div>
+    </div>
+    <a class="nav-item" href="connexion.html" style="color:#f87171;margin-top:4px">
+      <span class="icon">🚪</span> Déconnexion
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1>Mon Profil</h1>
+      <p>Gère tes informations et paramètres</p>
+    </div>
+    <button class="btn-edit" onclick="openEdit()">✏️ Modifier</button>
+  </div>
+
+  <div class="profile-grid">
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
+      <div class="card avatar-card">
+        <div class="big-avatar">
+          JD
+          <div class="avatar-edit-btn" title="Changer la photo">📷</div>
+        </div>
+        <div class="profile-name">John Doe</div>
+        <div class="profile-filiere">GL • L2</div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Sessions</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">2</div>
+            <div class="stat-label">Mentors</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">4.8</div>
+            <div class="stat-label">Note</div>
+          </div>
+        </div>
+        <div class="profile-bio">
+          Étudiant passionné par le développement logiciel et l'open source. Je cherche à m'améliorer en bases de données et à partager mes connaissances en Python.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Infos de contact</div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-item-label">📧 E-mail</div>
+            <div class="info-item-value" style="font-size:0.8rem">john.doe@etud.ifri.bj</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">📱 Téléphone</div>
+            <div class="info-item-value">+229 97 00 00 00</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">🎓 Filière</div>
+            <div class="info-item-value">GL</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">📚 Niveau</div>
+            <div class="info-item-value">Licence 2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="right-col">
+      <div class="card">
+        <div class="section-title">✅ Compétences maîtrisées</div>
+        <div class="tags-row">
+          <span class="tag tag-comp">Python</span>
+          <span class="tag tag-comp">Algorithmique</span>
+          <span class="tag tag-comp">HTML/CSS</span>
+          <span class="tag tag-comp">Git</span>
+          <span class="tag tag-comp">JavaScript</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">🎯 Lacunes / Besoin d'aide</div>
+        <div class="tags-row">
+          <span class="tag tag-lac">SQL avancé</span>
+          <span class="tag tag-lac">Réseaux</span>
+          <span class="tag tag-lac">Machine Learning</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📅 Disponibilités habituelles</div>
+        <div class="dispo-week">
+          <div class="dispo-cell"><div class="dispo-cell-day">Lun</div><div class="dispo-dot"></div></div>
+          <div class="dispo-cell"><div class="dispo-cell-day">Mar</div><div class="dispo-dot"></div></div>
+          <div class="dispo-cell"><div class="dispo-cell-day">Mer</div><div class="dispo-dot"></div></div>
+          <div class="dispo-cell"><div class="dispo-cell-day">Jeu</div><div class="dispo-dot"></div></div>
+          <div class="dispo-cell"><div class="dispo-cell-day">Ven</div><div class="dispo-dot"></div></div>
+          <div class="dispo-cell"><div class="dispo-cell-day">Sam</div><div class="dispo-dot"></div></div>
+          <div class="dispo-cell"><div class="dispo-cell-day">Dim</div><div class="dispo-dot"></div></div>
+        </div>
+        <p style="color:var(--muted);font-size:0.8rem;margin-top:1rem">⏰ Créneaux habituels : 14h00 – 18h00</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="edit-mode-overlay" id="editModal">
+  <div class="edit-panel">
+    <h2>✏️ Modifier mon profil</h2>
+    <form action="/profil/modifier" method="POST">
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" name="nom" value="Doe" />
+        </div>
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" name="prenom" value="John" />
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Filière</label>
+          <select name="filiere">
+            <option>IA</option><option>IM</option><option selected>GL</option>
+            <option>SE&IoT</option><option>SI</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Niveau</label>
+          <select name="niveau">
+            <option>L1</option><option selected>L2</option>
+            <option>L3</option><option>M1</option><option>M2</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Bio courte</label>
+        <textarea name="bio">Étudiant passionné par le développement logiciel et l'open source.</textarea>
+      </div>
+      <div class="form-group">
+        <label>Compétences (séparées par des virgules)</label>
+        <input type="text" name="competences" value="Python, Algorithmique, HTML/CSS, Git, JavaScript" />
+      </div>
+      <div class="form-group">
+        <label>Lacunes (séparées par des virgules)</label>
+        <input type="text" name="lacunes" value="SQL avancé, Réseaux, Machine Learning" />
+      </div>
+      <div class="save-btns">
+        <button type="button" class="btn-discard" onclick="closeEdit()">Annuler</button>
+        <button type="submit" class="btn-save">💾 Sauvegarder</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+  </html>
