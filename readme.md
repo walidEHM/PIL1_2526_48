@@ -105,13 +105,11 @@ python manage.py migrate
 
 ## Lancement du projet
 
-### Mode développement
-
 Depuis le dossier contenant `manage.py` :
 
 ```bash
 cd mentorlink_project
-python manage.py runserver
+daphne mentorlink.asgi:application
 ```
 
 Le site sera accessible sur :
@@ -120,25 +118,11 @@ Le site sera accessible sur :
 http://127.0.0.1:8000
 ```
 
+> **Important :** Le projet utilise Django Channels pour la messagerie en temps réel. Il est recommandé de lancer l'application avec Daphne afin d'activer les WebSockets.
 ---
+### Comptes de test
 
-## Lancement avec WebSocket (Channels)
-
-Pour utiliser la messagerie temps réel :
-
-```bash
-cd mentorlink_project
-daphne mentorlink.asgi:application
-```
-
-Puis ouvrir :
-
-```text
-http://127.0.0.1:8000
-```
-
----
-
+Des données de démonstration sont déjà présentes dans la sauvegarde de base de données fournie (`mentorlink_db.sql`), permettant de tester directement les fonctionnalités de matching et de messagerie.
 ## Structure du projet
 
 ```text
