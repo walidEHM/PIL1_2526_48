@@ -1,0 +1,681 @@
+﻿{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IFRI MentorLink â€” Annonces & Demandes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --card: #141720;
+      --border: #1f2433;
+      --accent: #4f8ef7;
+      --accent2: #a78bfa;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --success: #34d399;
+      --error: #f87171;
+      --input-bg: #1a1f2e;
+      --gradient: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* DÃ©coration d'arriÃ¨re-plan */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -150px; right: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--gradient);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .logo-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo-text span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-user img {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+    }
+
+    /* Conteneur Principal */
+    .main-container {
+      flex: 1;
+      max-width: 1300px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Panneau de Gauche : Publication */
+    .publish-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      align-self: start;
+    }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title span {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--muted);
+    }
+
+    /* Boutons Radio / SegmentÃ©s */
+    .segmented-control {
+      display: flex;
+      background: var(--input-bg);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .segmented-control input {
+      display: none;
+    }
+    .segmented-control label {
+      flex: 1;
+      text-align: center;
+      padding: 0.6rem;
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .segmented-control input:checked + label {
+      background: var(--border);
+      color: var(--text);
+    }
+    #type-offre:checked + label {
+      color: var(--accent);
+    }
+    #type-demande:checked + label {
+      color: var(--accent2);
+    }
+
+    /* Formulaires inputs */
+    .select-custom, .input-custom {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .select-custom:focus, .input-custom:focus {
+      border-color: var(--accent);
+    }
+
+    /* Grille de sÃ©lection des crÃ©neaux */
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .day-checkbox {
+      position: relative;
+    }
+    .day-checkbox input {
+      display: none;
+    }
+    .day-checkbox label {
+      display: block;
+      text-align: center;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-family: 'Space Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .day-checkbox input:checked + label {
+      background: rgba(79, 142, 247, 0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem;
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79,142,247,0.25);
+    }
+
+    /* Panneau de Droite : Moteur de Recherche & Feed */
+    .feed-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Barre de Recherche et Filtres */
+    .filter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .search-wrapper {
+      flex: 1;
+      position: relative;
+    }
+    .search-wrapper input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .search-wrapper::before {
+      content: 'ðŸ”';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+    .filter-select {
+      width: 160px;
+    }
+
+    /* Liste des annonces (Feed) */
+    .annonces-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .annonce-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .annonce-card:hover {
+      border-color: rgba(79, 142, 247, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Badge d'Annonce */
+    .badge-type {
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      font-size: 0.65rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .badge-type.offre {
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--success);
+    }
+    .badge-type.demande {
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--accent2);
+    }
+
+    /* Contenu de la carte */
+    .annonce-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .annonce-user img {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .user-meta h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .user-meta p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .annonce-body {
+      margin-bottom: 1.25rem;
+    }
+    .annonce-matiere {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .annonce-desc {
+      font-size: 0.85rem;
+      color: #b4b9c6;
+      line-height: 1.5;
+    }
+
+    .annonce-footer {
+      border-top: 1px solid rgba(31, 36, 51, 0.6);
+      padding-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .annonce-details {
+      display: flex;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .detail-item span {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .btn-respond {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-respond:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      .filter-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="#" class="logo">
+      <div class="logo-icon">ðŸ”—</div>
+      <div class="logo-text">IFRI_<span>MentorLink</span></div>
+    </a>
+    <nav class="nav-links">
+      <a href="#" class="nav-link">Tableau de bord</a>
+      <a href="#" class="nav-link active">Annonces</a>
+      <a href="#" class="nav-link">Messagerie</a>
+    </nav>
+    <div class="nav-user">
+      <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" alt="Profil">
+    </div>
+  </header>
+
+  <main class="main-container">
+    
+    <section class="publish-section">
+      <h2 class="section-title"><span>CrÃ©er une annonce</span></h2>
+      
+      <form id="annonceForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label>Je souhaite :</label>
+          <div class="segmented-control">
+            <input type="radio" name="typeAnnonce" id="type-offre" value="offre" checked>
+            <label for="type-offre">Offrir du mentorat</label>
+            
+            <input type="radio" name="typeAnnonce" id="type-demande" value="demande">
+            <label for="type-demande">Demander de l'aide</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="matiere">UnitÃ© d'Enseignement (MatiÃ¨re)</label>
+          <select id="matiere" class="select-custom" required>
+            <option value="" disabled selected>SÃ©lectionnez une matiÃ¨re...</option>
+            <option value="Algorithmique & Structures de donnÃ©es">Algorithmique & Structures de donnÃ©es</option>
+            <option value="Bases de donnÃ©es & AlgÃ¨bre relationnelle">Bases de donnÃ©es & AlgÃ¨bre relationnelle</option>
+            <option value="Programmation Python">Programmation Python</option>
+            <option value="DÃ©veloppement Web (HTML/CSS/JS)">DÃ©veloppement Web (HTML/CSS/JS)</option>
+            <option value="SystÃ¨mes d'Exploitation & IoT">SystÃ¨mes d'Exploitation & IoT</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="format">Format souhaitÃ©</label>
+          <select id="format" class="select-custom" required>
+            <option value="PrÃ©sentiel (IFRI)">PrÃ©sentiel (IFRI)</option>
+            <option value="En ligne (Meet/Discord)">En ligne (Meet/Discord)</option>
+            <option value="Hybride (Les deux)">Hybride (Les deux)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">PrÃ©cisions (ThÃ¨mes ciblÃ©s, Projet Ã  rÃ©aliser...)</label>
+          <textarea id="description" class="input-custom" rows="4" placeholder="Ex: Disponible pour aider sur les requÃªtes SQL complexes et les jointures avant le contrÃ´le..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>DisponibilitÃ©s de la semaine</label>
+          <div class="days-grid">
+            <div class="day-checkbox">
+              <input type="checkbox" id="day-lun" value="Lun">
+              <label for="day-lun">Lun</label>
+            </div>
+            <div class="day-checkbox">
+              <input type="checkbox" id="day-mar" value="Mar">
+              <label for="day-mar">Mar</label>
+            </div>
+            <div class="day-checkbox">
+              <input type="checkbox" id="day-mer" value="Mer">
+              <label for="day-mer">Mer</label>
+            </div>
+            <div class="day-checkbox">
+              <input type="checkbox" id="day-jeu" value="Jeu">
+              <label for="day-jeu">Jeu</label>
+            </div>
+            <div class="day-checkbox">
+              <input type="checkbox" id="day-ven" value="Ven">
+              <label for="day-ven">Ven</label>
+            </div>
+            <div class="day-checkbox">
+              <input type="checkbox" id="day-sam" value="Sam">
+              <label for="day-sam">Sam</label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Publier l'annonce</button>
+      </form>
+    </section>
+
+    <section class="feed-section">
+      
+      <div class="filter-card">
+        <div class="search-wrapper">
+          <input type="text" id="searchInput" oninput="filterAnnonces()" placeholder="Rechercher une matiÃ¨re, des mots-clÃ©s...">
+        </div>
+        <select id="filterType" class="select-custom filter-select" onchange="filterAnnonces()">
+          <option value="tous">Tous les types</option>
+          <option value="offre">Offres uniquement</option>
+          <option value="demande">Demandes uniquement</option>
+        </select>
+      </div>
+
+      <div class="annonces-list" id="annoncesList">
+        
+        <div class="annonce-card" data-type="offre" data-matiere="Bases de donnÃ©es & AlgÃ¨bre relationnelle">
+          <span class="badge-type offre">Offre</span>
+          <div class="annonce-user">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80" alt="Marie">
+            <div class="user-meta">
+              <h3>Marie Gandonou</h3>
+              <p>Licence IA â€” Niveau 2</p>
+            </div>
+          </div>
+          <div class="annonce-body">
+            <div class="annonce-matiere">Bases de donnÃ©es & AlgÃ¨bre relationnelle</div>
+            <p class="annonce-desc">Je propose des sessions de mise Ã  niveau sur l'algÃ¨bre relationnelle (sÃ©lection, projection, jointures) et l'Ã©criture de requÃªtes SQL complexes. IdÃ©al pour prÃ©parer l'examen.</p>
+          </div>
+          <div class="annonce-footer">
+            <div class="annonce-details">
+              <div class="detail-item">Format: <span>PrÃ©sentiel (IFRI)</span></div>
+              <div class="detail-item">Jours: <span>Mer, Jeu, Sam</span></div>
+            </div>
+            <button class="btn-respond" onclick="contactUser('Marie Gandonou')">Contacter</button>
+          </div>
+        </div>
+
+        <div class="annonce-card" data-type="demande" data-matiere="Programmation Python">
+          <span class="badge-type demande">Demande</span>
+          <div class="annonce-user">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="Koffi">
+            <div class="user-meta">
+              <h3>Koffi Atta</h3>
+              <p>Licence GL â€” Niveau 1</p>
+            </div>
+          </div>
+          <div class="annonce-body">
+            <div class="annonce-matiere">Programmation Python</div>
+            <p class="annonce-desc">Besoin d'aide urgent sur la gestion des fichiers en Python et la manipulation des listes/dictionnaires pour le projet de fin de semestre. Merci d'avance !</p>
+          </div>
+          <div class="annonce-footer">
+            <div class="annonce-details">
+              <div class="detail-item">Format: <span>En ligne</span></div>
+              <div class="detail-item">Jours: <span>Lun, Ven</span></div>
+            </div>
+            <button class="btn-respond" onclick="contactUser('Koffi Atta')">Contacter</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Soumission du formulaire de publication
+    function handleFormSubmit(event) {
+      event.preventDefault();
+
+      // RÃ©cupÃ©ration des valeurs du formulaire
+      const type = document.querySelector('name[typeAnnonce]:checked')?.value || 'offre';
+      const matiere = document.getElementById('matiere').value;
+      const format = document.getElementById('format').value;
+      const description = document.getElementById('description').value;
+      
+      // RÃ©cupÃ©ration des jours cochÃ©s
+      const checkedDays = [];
+      document.querySelectorAll('.days-grid input:checked').forEach(cb => {
+        checkedDays.push(cb.value);
+      });
+      const daysStr = checkedDays.length > 0 ? checkedDays.join(', ') : 'Ã€ dÃ©finir';
+
+      // CrÃ©ation graphique d'une nouvelle carte d'annonce (Ajout dynamique au flux)
+      const feed = document.getElementById('annoncesList');
+      const card = document.createElement('div');
+      card.className = 'annonce-card';
+      card.setAttribute('data-type', type);
+      card.setAttribute('data-matiere', matiere);
+
+      card.innerHTML = `
+        <span class="badge-type ${type}">${type}</span>
+        <div class="annonce-user">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" alt="Moi">
+          <div class="user-meta">
+            <h3>Jean Doe</h3>
+            <p>Licence GL â€” Niveau 1 (Moi)</p>
+          </div>
+        </div>
+        <div class="annonce-body">
+          <div class="annonce-matiere">${matiere}</div>
+          <p class="annonce-desc">${escapeHTML(description)}</p>
+        </div>
+        <div class="annonce-footer">
+          <div class="annonce-details">
+            <div class="detail-item">Format: <span>${format}</span></div>
+            <div class="detail-item">Jours: <span>${daysStr}</span></div>
+          </div>
+          <button class="btn-respond" style="background: var(--border); color: var(--muted); cursor: not-allowed;" disabled>Votre annonce</button>
+        </div>
+      `;
+
+      // InsÃ©rer au tout dÃ©but du flux d'annonces
+      feed.insertBefore(card, feed.firstChild);
+
+      // RÃ©initialiser le formulaire
+      document.getElementById('annonceForm').reset();
+      alert("Votre annonce a Ã©tÃ© publiÃ©e avec succÃ¨s sur IFRI MentorLink !");
+    }
+
+    // Algorithme de filtrage en temps rÃ©el
+    function filterAnnonces() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      const typeVal = document.getElementById('filterType').value;
+      const cards = document.querySelectorAll('.annonce-card');
+
+      cards.forEach(card => {
+        const cardType = card.getAttribute('data-type');
+        const cardMatiere = card.getAttribute('data-matiere').toLowerCase();
+        const cardDesc = card.querySelector('.annonce-desc').textContent.toLowerCase();
+
+        const matchType = (typeVal === 'tous' || cardType === typeVal);
+        const matchSearch = (cardMatiere.includes(searchVal) || cardDesc.includes(searchVal));
+
+        if (matchType && matchSearch) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Redirection / Interaction simulÃ©e pour contacter
+    function contactUser(name) {
+      alert(`Redirection vers la messagerie instantanÃ©e pour initier la discussion avec ${name}...`);
+      // Exemple de liaison logique : window.location.href = 'chat.html?user=' + encodeURIComponent(name);
+    }
+
+    // SÃ©curisation anti-XSS pour le rendu de texte utilisateur
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

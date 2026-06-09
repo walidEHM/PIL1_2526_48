@@ -1,0 +1,473 @@
+﻿{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IFRI MentorLink â€” Gestion des Matchs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --card: #141720;
+      --border: #1f2433;
+      --accent: #4f8ef7;
+      --accent2: #a78bfa;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --success: #10b981; /* Vert requis pour Accepter */
+      --error: #ef4444;   /* Rouge requis pour Refuser */
+      --input-bg: #1a1f2e;
+      --gradient: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--gradient);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .logo-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo-text span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--text); }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-user img {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+    }
+
+    /* Conteneur principal */
+    .matching-container {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .page-header p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* SystÃ¨me d'Onglets (Tabs) */
+    .tabs-navigation {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      gap: 1.5rem;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Sora', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.75rem 0.25rem;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: var(--accent);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+    .tab-count {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--input-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* Conteneur des cartes de match */
+    .match-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Carte de Profil Match */
+    .match-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .match-card:hover {
+      border-color: rgba(79, 142, 247, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Barre de score visuelle (Composant requis) */
+    .score-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 75px;
+    }
+    .score-percentage {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--accent2);
+    }
+    .score-bar-bg {
+      width: 100%;
+      height: 5px;
+      background: var(--input-bg);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 3px;
+    }
+
+    /* Profil Info */
+    .profile-details {
+      flex: 1;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+    .info-text h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .info-text p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 6px;
+    }
+    
+    /* Tags de compÃ©tences partagÃ©es */
+    .tags-shared {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag-shared {
+      font-size: 0.7rem;
+      background: rgba(167, 139, 250, 0.06);
+      border: 1px solid rgba(167, 139, 250, 0.15);
+      color: var(--accent2);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* Zone des Boutons d'Action requis (Accepter / Refuser) */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-action {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.65rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn-action:active { transform: scale(0.97); }
+    
+    .btn-accept {
+      background: var(--success);
+      color: #ffffff;
+    }
+    .btn-accept:hover { opacity: 0.9; box-shadow: 0 0 12px rgba(16, 185, 129, 0.3); }
+
+    .btn-refuse {
+      background: var(--error);
+      color: #ffffff;
+    }
+    .btn-refuse:hover { opacity: 0.9; box-shadow: 0 0 12px rgba(239, 68, 68, 0.3); }
+
+    /* Vue vide */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .match-card { flex-direction: column; align-items: stretch; gap: 1.25rem; }
+      .profile-details { align-items: flex-start; }
+      .action-buttons { width: 100%; }
+      .btn-action { flex: 1; text-align: center; }
+      .score-container { width: 100%; flex-direction: row; justify-content: space-between; }
+      .score-bar-bg { width: 120px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="{% url 'accounts:dashboard' %}" class="logo">
+      <div class="logo-icon">ðŸ”—</div>
+      <div class="logo-text">IFRI_<span>MentorLink</span></div>
+    </a>
+    <nav class="nav-links">
+      <a href="{% url 'accounts:dashboard' %}" class="nav-link">Tableau de bord</a>
+      <a href="{% url 'matching:annonces' %}" class="nav-link">Annonces</a>
+      <a href="#" class="nav-link active">Mes Matchs</a>
+      <a href="{% url 'messaging:liste_conversations' %}" class="nav-link">Messagerie</a>
+    </nav>
+    <div class="nav-user">
+      <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" alt="Profil">
+    </div>
+  </header>
+
+  <!-- Conteneur principal -->
+  <main class="matching-container">
+    
+    <div class="page-header">
+      <h1>Propositions de mise en correspondance</h1>
+      <p>GÃ©rez les connexions calculÃ©es par l'algorithme d'affinitÃ©s de l'IFRI.</p>
+    </div>
+
+    <!-- Navigation des Onglets (Exigence du document : En attente / AcceptÃ©s / RefusÃ©s) -->
+    <div class="tabs-navigation">
+      <button class="tab-btn active" onclick="switchTab('attente')">En attente <span class="tab-count" id="count-attente">2</span></button>
+      <button class="tab-btn" onclick="switchTab('acceptes')">AcceptÃ©s <span class="tab-count" id="count-acceptes">0</span></button>
+      <button class="tab-btn" onclick="switchTab('refuses')">RefusÃ©s <span class="tab-count" id="count-refuses">0</span></button>
+    </div>
+
+    <!-- Message de liste vide -->
+    <div class="empty-state" id="emptyView">Aucun profil ne correspond Ã  cette catÃ©gorie pour le moment.</div>
+
+    <!-- Flux des cartes de matching -->
+    <div class="match-list" id="matchListContainer">
+      
+      <!-- Profil 1 (En attente) -->
+      <div class="match-card" data-status="attente" id="match-1">
+        <div class="score-container">
+          <span class="score-percentage">95%</span>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width: 95%;"></div></div>
+        </div>
+        <div class="profile-details">
+          <img class="avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80" alt="Marie">
+          <div class="info-text">
+            <h3>Marie Gandonou</h3>
+            <p>Licence IA â€” Niveau 2 â€¢ CompÃ©tences communes</p>
+            <div class="tags-shared">
+              <span class="tag-shared">Bases de donnÃ©es</span>
+              <span class="tag-shared">SQL</span>
+              <span class="tag-shared">Mercredi/Jeudi</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-action btn-refuse" onclick="processMatch(1, 'refuses')">Refuser</button>
+          <button class="btn-action btn-accept" onclick="processMatch(1, 'acceptes', 'Marie Gandonou')">Accepter</button>
+        </div>
+      </div>
+
+      <!-- Profil 2 (En attente) -->
+      <div class="match-card" data-status="attente" id="match-2">
+        <div class="score-container">
+          <span class="score-percentage">88%</span>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width: 88%;"></div></div>
+        </div>
+        <div class="profile-details">
+          <img class="avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="Koffi">
+          <div class="info-text">
+            <h3>Koffi Atta</h3>
+            <p>Licence GL â€” Niveau 2 â€¢ CompÃ©tences communes</p>
+            <div class="tags-shared">
+              <span class="tag-shared">Programmation Python</span>
+              <span class="tag-shared">Lundi/Vendredi</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-action btn-refuse" onclick="processMatch(2, 'refuses')">Refuser</button>
+          <button class="btn-action btn-accept" onclick="processMatch(2, 'acceptes', 'Koffi Atta')">Accepter</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let activeTab = 'attente';
+
+    // Fonction de bascule des onglets
+    function switchTab(status) {
+      activeTab = status;
+      
+      // Mise Ã  jour de la classe CSS active sur les boutons d'onglets
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.setAttribute('onclick', switchTab('${status}'))) {} 
+      });
+      
+      // Trouver le bouton cliquÃ© pour lui appliquer la bordure d'activation
+      event.currentTarget.classList.add('active');
+
+      // Filtrage visuel des cartes
+      let visibleCount = 0;
+      const cards = document.querySelectorAll('.match-card');
+      
+      cards.forEach(card => {
+        if (card.getAttribute('data-status') === status) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Gestion de la vue vide
+      document.getElementById('emptyView').style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    // Traitement des actions Accepter / Refuser
+    function processMatch(id, nextStatus, username) {
+      const card = document.getElementById(match-${id});
+      if (!card) return;
+
+      // Mise Ã  jour de l'Ã©tat de la carte
+      card.setAttribute('data-status', nextStatus);
+      
+      // Si acceptÃ© : masquer les boutons originaux et simuler la redirection
+      if (nextStatus === 'acceptes') {
+        const actionArea = card.querySelector('.action-buttons');
+        actionArea.innerHTML = <span style="color: var(--success); font-size: 0.8rem; font-weight: 600; display:flex; align-items:center; gap:4px;">âœ“ Match ValidÃ©</span>;
+        
+        alert(Felicitations ! Match validÃ© avec ,{username}. CrÃ©ation automatique du canal de discussion...);
+        
+        // Redirection logique immÃ©diate vers la messagerie (Composant 07)
+        if (typeof openChat === "function") {
+            openChat(username);
+        } else {
+            window.location.href = "{% url 'messaging:liste_conversations' %}?contact=" + encodeURIComponent(username);
+        }
+      } else if (nextStatus === 'refuses') {
+        const actionArea = card.querySelector('.action-buttons');
+        actionArea.innerHTML = <span style="color: var(--error); font-size: 0.8rem; font-weight: 600;">RefusÃ©</span>;
+      }
+
+      // Recalculer les compteurs numÃ©riques des onglets
+      updateCounters();
+      
+      // RafraÃ®chir l'affichage de l'onglet courant
+      switchTab(activeTab);
+    }
+
+    // Met Ã  jour dynamiquement les petits badges numÃ©riques des onglets
+    function updateCounters() {
+      const statuses = ['attente', 'acceptes', 'refuses'];
+      statuses.forEach(status => {
+        const count = document.querySelectorAll(.match-card[data-status] ,"${status}",).length;
+        document.getElementById(count-${status}).textContent = count;
+      });
+    }
+
+    // Initialisation au chargement
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCounters();
+      switchTab('attente');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messagerie - MentorLink</title>
+    <!-- Font Awesome pour l'icône -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0d0f14;
+            --card: #141720;
+            --border: #1f2433;
+            --accent: #4f8ef7;
+            --accent2: #a78bfa;
+            --text: #e8eaf0;
+            --muted: #6b7280;
+            --success: #34d399;
+            --error: #f87171;
+            --input-bg: #1a1f2e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            height: 100vh;
+            background: radial-gradient(circle at top, rgba(79,142,247,0.16), transparent 30%),
+                        linear-gradient(180deg, #0d0f14 0%, #090b10 100%);
+            color: var(--text);
+            font-family: 'Sora', sans-serif;
+            overflow: hidden;
+        }
+        a { color: inherit; text-decoration: none; }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            background: rgba(20, 23, 32, 0.88);
+            backdrop-filter: blur(12px);
+            margin: 16px 24px;
+            flex-shrink: 0;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: 0.04em;
+        }
+        .brand span { color: var(--accent2); }
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            font-size: 0.95rem;
+            color: var(--muted);
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text);
+            background: rgba(79, 142, 247, 0.14);
+        }
+
+        .messaging-layout {
+            display: flex;
+            flex: 1;
+            gap: 24px;
+            margin: 0 24px 24px 24px;
+            min-height: 0;
+        }
+
+        .conversations-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background: rgba(20, 23, 32, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .sidebar-header h3 { margin: 0; font-size: 1.2rem; }
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        .conv-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .conv-item:hover { background: rgba(255,255,255,0.05); }
+        .conv-item.active {
+            background: rgba(79, 142, 247, 0.15);
+            border-left: 3px solid var(--accent);
+        }
+        .conv-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--input-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .conv-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .conv-details { flex: 1; min-width: 0; }
+        .conv-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .conv-last-msg {
+            font-size: 0.75rem;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .conv-badge {
+            background: var(--error);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .chat-main {
+            flex: 1;
+            background: rgba(20, 23, 32, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 1.1rem;
+            gap: 8px;
+        }
+
+        @media (max-width: 800px) {
+            .messaging-layout {
+                flex-direction: column;
+                margin: 0 16px 16px 16px;
+            }
+            .conversations-sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+            .topbar {
+                margin: 16px 16px;
+            }
+        }
+        .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span { color: #4f8ef7; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="topbar">
+            <a href="{% url 'accounts:dashboard' %}" class="logo">
+            <div class="logo-icon">🔗</div>
+            <div class="logo-text">IFRI_<span>MentorLink</span></div>
+            </a>
+            <nav class="nav-links">
+                <a href="/dashboard/">Tableau de bord</a>
+                <a href="/annonces.html">Annonces</a>
+                <a href="{% url 'messaging:liste_conversations' %}" class="active">Messagerie</a>
+            </nav>
+        </header>
+
+        <div class="messaging-layout">
+            <!-- SIDEBAR : liste des conversations -->
+            <div class="conversations-sidebar">
+                <div class="sidebar-header">
+                    <h3>Mes discussions</h3>
+                </div>
+                <div class="conversations-list">
+                    {% for conv in conversations %}
+                        <a href="{% url 'messaging:detail_conversation' conv.idConversation %}" class="conv-item">
+                            <div class="conv-avatar">
+                                {% if conv.other_user.photo %}
+                                    <img src="{{ conv.other_user.photo.url }}" alt="">
+                                {% else %}
+                                    {{ conv.other_user.first_name|slice:":1"|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="conv-details">
+                                <div class="conv-name">
+                                    {{ conv.other_user.first_name }} {{ conv.other_user.last_name }}
+                                    {% if conv.non_lus > 0 %}
+                                        <span class="conv-badge">{{ conv.non_lus }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="conv-last-msg">
+                                    {% if conv.dernier_message %}
+                                        {{ conv.dernier_message.contenuMessage|truncatechars:35 }}
+                                    {% else %}
+                                        Aucun message
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div style="padding: 20px; text-align: center; color: var(--muted);">
+                            Aucune conversation.
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- ZONE PRINCIPALE : message d'accueil -->
+            <div class="chat-main">
+                <i class="fa-solid fa-comments" style="font-size: 3rem; opacity: 0.3;"></i>
+                <div>Sélectionnez une discussion</div>
+                <div style="font-size: 0.85rem;">Choisissez une conversation dans la liste pour commencer à échanger.</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
