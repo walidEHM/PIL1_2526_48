@@ -1,0 +1,961 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PIL1_2526_48 - Rapport de Groupe</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --paper: #ffffff;
+      --ink: #172033;
+      --muted: #68758a;
+      --line: #e6ebf2;
+      --accent: #0f6bff;
+      --accent-soft: #eaf2ff;
+      --green: #0f9f6e;
+      --gold: #c58b16;
+      --shadow: 0 22px 70px rgba(20, 31, 53, 0.11);
+      --radius-xl: 32px;
+      --radius-lg: 22px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 107, 255, 0.12), transparent 34rem),
+        linear-gradient(135deg, #ffffff 0%, var(--bg) 52%, #eef3fb 100%);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.65;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(15, 107, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 107, 255, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 70%);
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 32px auto 80px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      padding: 58px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.82)),
+        radial-gradient(circle at 82% 18%, rgba(15, 107, 255, 0.19), transparent 18rem);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "48";
+      position: absolute;
+      right: -14px;
+      bottom: -86px;
+      color: rgba(15, 107, 255, 0.07);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: clamp(12rem, 26vw, 21rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.1em;
+    }
+
+    .brand-logo {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 26px;
+      padding: 12px 16px 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 16px 44px rgba(20, 31, 53, 0.08);
+    }
+
+    .brand-mark {
+      width: 56px;
+      height: 56px;
+      flex: 0 0 auto;
+      filter: drop-shadow(0 10px 18px rgba(15, 107, 255, 0.18));
+    }
+
+    .brand-text {
+      display: grid;
+      gap: 1px;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      line-height: 1.05;
+    }
+
+    .brand-text strong {
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-text span {
+      color: var(--accent);
+    }
+
+    .brand-text small {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--accent);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow span {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--accent);
+      box-shadow: 0 0 0 7px var(--accent-soft);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(3.3rem, 8vw, 7.6rem);
+      font-weight: 900;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      font-weight: 900;
+    }
+
+    h3 {
+      margin-bottom: 12px;
+      font-size: 1.13rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .hero-subtitle {
+      position: relative;
+      z-index: 1;
+      max-width: 660px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 1.25rem;
+    }
+
+    .hero-meta {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 870px;
+      margin-top: 54px;
+    }
+
+    .meta-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(14px);
+    }
+
+    .meta-card small,
+    .section-kicker {
+      display: block;
+      color: var(--muted);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .meta-card strong {
+      display: block;
+      margin-top: 8px;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 1.1rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 28px;
+      margin-top: 30px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 14px 50px rgba(20, 31, 53, 0.07);
+    }
+
+    .toc-title {
+      margin-bottom: 16px;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 0.93rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 180ms ease, transform 180ms ease;
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+    }
+
+    .section {
+      overflow: hidden;
+      padding: 36px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.91);
+      box-shadow: 0 18px 60px rgba(20, 31, 53, 0.08);
+    }
+
+    .section-header {
+      display: flex;
+      gap: 22px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-number {
+      min-width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-weight: 900;
+    }
+
+    .members {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .person {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: var(--ink);
+      color: #fff;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-weight: 900;
+    }
+
+    .person strong {
+      display: block;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      line-height: 1.25;
+    }
+
+    .person span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: linear-gradient(90deg, #fff, #f8fbff);
+    }
+
+    .timeline-item strong {
+      color: var(--accent);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+    }
+
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .info-card {
+      min-height: 190px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.96)),
+        radial-gradient(circle at top right, rgba(15, 107, 255, 0.14), transparent 10rem);
+    }
+
+    .info-card p,
+    .feature-list li,
+    .steps li {
+      color: var(--muted);
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+    }
+
+    .database-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .db-row {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+    }
+
+    .db-row strong {
+      color: var(--ink);
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+    }
+
+    .db-row span {
+      color: var(--muted);
+    }
+
+    .deploy-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .step-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: #fff;
+    }
+
+    .step-card code,
+    .code-block {
+      display: block;
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: #101828;
+      color: #eaf2ff;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .steps {
+      margin: 14px 0 0;
+      padding-left: 20px;
+    }
+
+    .steps li {
+      margin: 8px 0;
+    }
+
+    .manual-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .manual-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, #fff, #f9fbff);
+    }
+
+    .difficulty {
+      padding: 24px;
+      border: 1px solid #f2dfb8;
+      border-radius: var(--radius-lg);
+      background: #fff9ec;
+      color: #6f4d0b;
+    }
+
+    .footer {
+      margin-top: 30px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: #fff;
+      color: var(--muted);
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(20, 31, 53, 0.07);
+    }
+
+    .print-button {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 5;
+      padding: 13px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      cursor: pointer;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-weight: 900;
+      box-shadow: 0 14px 40px rgba(20, 31, 53, 0.25);
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        padding: 36px;
+      }
+
+      .hero-meta,
+      .layout,
+      .cards-3,
+      .deploy-grid,
+      .manual-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+      }
+
+      .members,
+      .feature-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 22px, 1180px);
+        margin-top: 12px;
+      }
+
+      .hero,
+      .section {
+        padding: 24px;
+        border-radius: 22px;
+      }
+
+      .section-header,
+      .person,
+      .timeline-item,
+      .db-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        display: grid;
+      }
+
+      .brand-logo {
+        width: 100%;
+      }
+
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      body::before,
+      .toc,
+      .print-button {
+        display: none;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      .hero,
+      .section,
+      .footer {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .layout {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">Imprimer / PDF</button>
+
+  <main class="page">
+    <section class="hero" id="accueil">
+      <div class="brand-logo" aria-label="Logo IFRI MentorLink">
+        <svg class="brand-mark" viewBox="0 0 64 64" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="mentorlinkGradient" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0F6BFF" />
+              <stop offset="1" stop-color="#0F9F6E" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#mentorlinkGradient)" />
+          <path d="M22 25.5C22 19.7 26.7 15 32.5 15H44v9H32.5C31.7 24 31 24.7 31 25.5S31.7 27 32.5 27H40c5.8 0 10.5 4.7 10.5 10.5S45.8 48 40 48H28.5v-9H40c.8 0 1.5-.7 1.5-1.5S40.8 36 40 36h-7.5C26.7 36 22 31.3 22 25.5Z" fill="#fff" opacity=".96" />
+          <path d="M14 37.5C14 31.7 18.7 27 24.5 27H36v9H24.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5H32v9h-7.5C18.7 48 14 43.3 14 37.5Z" fill="#EAF2FF" opacity=".92" />
+          <circle cx="19" cy="18" r="4" fill="#fff" />
+          <circle cx="46" cy="46" r="4" fill="#fff" />
+        </svg>
+        <div class="brand-text">
+          <strong>IFRI_<span>MentorLink</span></strong>
+          <small>Plateforme de mentorat universitaire</small>
+        </div>
+      </div>
+      <div class="eyebrow"><span></span>PIL1_2526_48</div>
+      <h1>Projet Web Rapport de Groupe</h1>
+      <p class="hero-subtitle">
+        Présentation du projet MentorLink, réalisé par le groupe 48 durant l'année universitaire 2025-2026.
+      </p>
+
+      <div class="hero-meta">
+        <div class="meta-card">
+          <small>Groupe</small>
+          <strong>48</strong>
+        </div>
+        <div class="meta-card">
+          <small>Année universitaire</small>
+          <strong>2025-2026</strong>
+        </div>
+        <div class="meta-card">
+          <small>Dépôt GitHub</small>
+          <strong>PIL1_2526_48</strong>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="toc" aria-label="Navigation du rapport">
+        <div class="toc-title">Sommaire</div>
+        <a href="#groupe">1. Groupe</a>
+        <a href="#fonctionnement">2. Fonctionnement</a>
+        <a href="#conception">3. Conception</a>
+        <a href="#database">4. Base de données</a>
+        <a href="#deploiement">5. Déploiement</a>
+        <a href="#manuel">6. Manuel d'utilisation</a>
+        <a href="#difficultes">7. Difficultés</a>
+        <a href="#conclusion">8. Conclusion</a>
+      </aside>
+
+      <div class="content">
+        <section class="section" id="groupe">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Nom du groupe et membres</span>
+              <h2>Groupe 48</h2>
+            </div>
+            <div class="section-number">01</div>
+          </div>
+
+          <p>
+            Le groupe 48 est composé de sept membres ayant participé à la conception, au développement et à la documentation
+            du projet web MentorLink.
+          </p>
+
+          <div class="members">
+            <div class="person"><div class="avatar">1</div><div><strong>AWADJETINDE Mawuna Charbelle Maud</strong><span>Frontend : pages annonces et matching</span></div></div>
+            <div class="person"><div class="avatar">2</div><div><strong>AGON Clauvisia Esther Fifamé</strong><span>Backend : gestion des comptes et authentification</span></div></div>
+            <div class="person"><div class="avatar">3</div><div><strong>COMLAN FOLY Darryl Chanel</strong><span>Frontend HTML, CSS et JavaScript : pages profil et accueil</span></div></div>
+            <div class="person"><div class="avatar">4</div><div><strong>GODO Belive Fulbert</strong><span>Base de données : fichier SQL</span></div></div>
+            <div class="person"><div class="avatar">5</div><div><strong>EL-HADJ MAMA Abdoul-Walid</strong><span>Architecture Django et structure des fichiers</span></div></div>
+            <div class="person"><div class="avatar">6</div><div><strong>SERO Yacoubou</strong><span>Backend : messagerie instantanée</span></div></div>
+            <div class="person"><div class="avatar">7</div><div><strong>GABA ISSIFOU Faridath</strong><span>Algorithme de matching</span></div></div>
+          </div>
+        </section>
+
+        <section class="section" id="fonctionnement">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Organisation interne</span>
+              <h2>Mode de fonctionnement</h2>
+            </div>
+            <div class="section-number">02</div>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item"><strong>Jours 1 à 3</strong><span>Analyse des besoins, réalisation des maquettes et conception de la base de données.</span></div>
+            <div class="timeline-item"><strong>Semaines 4 à 6</strong><span>Développement du backend et création de la base de données.</span></div>
+            <div class="timeline-item"><strong>Semaines 6 à 9</strong><span>Développement du frontend et intégration des différentes parties.</span></div>
+            <div class="timeline-item"><strong>Jour 10</strong><span>Tests, corrections et finalisation de la documentation.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="conception">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Architecture du projet</span>
+              <h2>Description de la conception</h2>
+            </div>
+            <div class="section-number">03</div>
+          </div>
+
+          <div class="cards-3">
+            <article class="info-card">
+              <h3>Frontend</h3>
+              <p>
+                Le frontend est développé avec HTML5, CSS3, JavaScript et Bootstrap 5. Il gère les pages d'accueil,
+                de profil, de matching, d'annonces et de messagerie.
+              </p>
+            </article>
+            <article class="info-card">
+              <h3>Backend</h3>
+              <p>
+                Le backend utilise Django avec Python. Il prend en charge l'authentification, le traitement des données,
+                l'algorithme de matching et les échanges avec la base de données.
+              </p>
+            </article>
+            <article class="info-card">
+              <h3>Base de données</h3>
+              <p>
+                MySQL stocke les utilisateurs, les compétences, les disponibilités, les annonces, les demandes, les matchs
+                et les messages.
+              </p>
+            </article>
+          </div>
+
+          <ul class="feature-list">
+            <li><strong>accounts/</strong> : gestion des utilisateurs et authentification.</li>
+            <li><strong>matching/</strong> : gestion des annonces et algorithme de mise en correspondance mentor-mentoré.</li>
+            <li><strong>messaging/</strong> : gestion de la messagerie instantanée.</li>
+            <li><strong>templates/</strong> : pages HTML de l'application.</li>
+            <li><strong>static/</strong> : fichiers CSS, JavaScript et images.</li>
+            <li><strong>database/</strong> : fichier SQL de sauvegarde de la base de données.</li>
+            <li><strong>manage.py</strong> : point d'entrée principal du projet Django.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="database">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Modèle de données</span>
+              <h2>Base de données</h2>
+            </div>
+            <div class="section-number">04</div>
+          </div>
+
+          <div class="database-grid">
+            <div class="db-row"><strong>Filière</strong><span>Stocke les filières disponibles à l'IFRI, comme IA, GL, SI ou IM.</span></div>
+            <div class="db-row"><strong>Utilisateur</strong><span>Contient les informations personnelles, les identifiants, la filière, le niveau, la photo, la bio et les centres d'intérêt.</span></div>
+            <div class="db-row"><strong>Compétence</strong><span>Liste les compétences ou matières disponibles dans le système.</span></div>
+            <div class="db-row"><strong>Utilisateur compétence</strong><span>Associe un utilisateur à ses compétences maîtrisées ou à ses lacunes.</span></div>
+            <div class="db-row"><strong>Disponibilité</strong><span>Enregistre les créneaux horaires disponibles, indisponibles ou réservés.</span></div>
+            <div class="db-row"><strong>Annonce</strong><span>Représente une offre ou une demande de mentorat, en présentiel, en ligne ou les deux.</span></div>
+            <div class="db-row"><strong>Annonce-compétence</strong><span>Associe les compétences concernées à chaque annonce.</span></div>
+            <div class="db-row"><strong>Annonce-disponibilité</strong><span>Associe les créneaux horaires à chaque annonce publiée.</span></div>
+            <div class="db-row"><strong>Match</strong><span>Représente la compatibilité entre un mentor et un mentoré, avec un score et un statut.</span></div>
+            <div class="db-row"><strong>Conversation</strong><span>Représente une discussion ouverte entre deux utilisateurs après un match.</span></div>
+            <div class="db-row"><strong>Message</strong><span>Contient les messages échangés, leur expéditeur, leur contenu et leur statut de lecture.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="deploiement">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Installation et lancement</span>
+              <h2>Instructions de déploiement</h2>
+            </div>
+            <div class="section-number">05</div>
+          </div>
+
+          <div class="deploy-grid">
+            <div class="step-card">
+              <h3>Prérequis</h3>
+              <p>Python 3.x, MySQL et Git doivent être installés avant l'exécution de l'application.</p>
+            </div>
+            <div class="step-card">
+              <h3>1. Cloner le dépôt</h3>
+              <code>git clone &lt;lien_du_depot&gt;
+cd PIL1_2526_48</code>
+            </div>
+            <div class="step-card">
+              <h3>2. Créer l'environnement virtuel</h3>
+              <code>python -m venv venv
+venv\Scripts\activate</code>
+            </div>
+            <div class="step-card">
+              <h3>3. Installer les dépendances</h3>
+              <code>pip install -r requirements.txt</code>
+            </div>
+            <div class="step-card">
+              <h3>4. Configurer MySQL</h3>
+              <code>CREATE DATABASE mentorlink_db;
+mysql -u root -p mentorlink_db &lt; mentorlink_project/database/mentorlink_db.sql</code>
+            </div>
+            <div class="step-card">
+              <h3>5. Configurer Django</h3>
+              <code>copy mentorlink_project\.env.example mentorlink_project\.env</code>
+            </div>
+            <div class="step-card">
+              <h3>6. Lancer Django</h3>
+              <code>cd mentorlink_project
+python manage.py runserver</code>
+            </div>
+            <div class="step-card">
+              <h3>7. WebSockets</h3>
+              <code>daphne mentorlink.asgi:application</code>
+            </div>
+          </div>
+
+          <p class="code-block">Adresse d'accès : http://127.0.0.1:8000</p>
+        </section>
+
+        <section class="section" id="manuel">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Guide utilisateur</span>
+              <h2>Manuel d'utilisation</h2>
+            </div>
+            <div class="section-number">06</div>
+          </div>
+
+          <div class="manual-grid">
+            <article class="manual-card">
+              <h3>Création d'un compte</h3>
+              <ol class="steps">
+                <li>Accéder à la page d'accueil.</li>
+                <li>Cliquer sur « S'inscrire ».</li>
+                <li>Renseigner le nom, le prénom, l'adresse e-mail, le téléphone, le mot de passe, la filière et le niveau.</li>
+                <li>Ajouter les compétences, les lacunes et les disponibilités.</li>
+                <li>Valider l'inscription.</li>
+              </ol>
+            </article>
+            <article class="manual-card">
+              <h3>Connexion</h3>
+              <ol class="steps">
+                <li>Cliquer sur « Se connecter ».</li>
+                <li>Saisir son e-mail ou son numéro de téléphone.</li>
+                <li>Entrer son mot de passe.</li>
+                <li>Cliquer sur « Connexion ».</li>
+              </ol>
+            </article>
+            <article class="manual-card">
+              <h3>Gestion du profil</h3>
+              <ol class="steps">
+                <li>Accéder à son profil.</li>
+                <li>Ajouter la photo, la filière et le niveau d'études.</li>
+                <li>Indiquer les compétences, les lacunes et les disponibilités.</li>
+                <li>Enregistrer les modifications.</li>
+              </ol>
+            </article>
+            <article class="manual-card">
+              <h3>Recherche de mentorat</h3>
+              <ol class="steps">
+                <li>Consulter les offres ou demandes de mentorat.</li>
+                <li>Utiliser les filtres de recherche si nécessaire.</li>
+                <li>Sélectionner un profil ou une annonce correspondant à ses besoins.</li>
+                <li>Démarrer une conversation avec l'utilisateur concerné.</li>
+              </ol>
+            </article>
+            <article class="manual-card">
+              <h3>Système de matching</h3>
+              <ol class="steps">
+                <li>Accéder à la section « Matching ».</li>
+                <li>Consulter les recommandations proposées.</li>
+                <li>Visualiser le score de compatibilité.</li>
+                <li>Choisir un mentor ou un mentoré.</li>
+              </ol>
+            </article>
+            <article class="manual-card">
+              <h3>Messagerie et déconnexion</h3>
+              <ol class="steps">
+                <li>Ouvrir la section « Messages ».</li>
+                <li>Sélectionner ou démarrer une conversation.</li>
+                <li>Envoyer et recevoir des messages.</li>
+                <li>Se déconnecter depuis l'icône du profil.</li>
+              </ol>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="difficultes">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Retour d'expérience</span>
+              <h2>Difficultés rencontrées</h2>
+            </div>
+            <div class="section-number">07</div>
+          </div>
+
+          <div class="difficulty">
+            Durant la réalisation du projet MentorLink, plusieurs difficultés ont été rencontrées, aussi bien sur le plan
+            technique que sur le plan organisationnel.
+            <br><br>
+            Sur le plan technique, la mise en place de l'environnement Django a nécessité plusieurs configurations,
+            notamment l'installation des dépendances Python, la connexion à la base de données MySQL et la gestion des
+            migrations. Certaines erreurs liées à la structure du projet et aux relations entre les modèles ont également
+            été rencontrées.
+            <br><br>
+            Une autre difficulté concernait la gestion des relations entre les utilisateurs, leurs compétences, leurs
+            disponibilités et leurs profils. Il a fallu organiser correctement les différentes applications Django afin de
+            rendre le projet plus clair et plus maintenable.
+            <br><br>
+            Sur le plan organisationnel, la coordination du travail en équipe a demandé une bonne répartition des tâches.
+            L'utilisation de GitHub a permis de structurer les contributions, de suivre l'évolution du projet et de limiter
+            les conflits de code.
+          </div>
+        </section>
+
+        <section class="section" id="conclusion">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Bilan du projet</span>
+              <h2>Conclusion</h2>
+            </div>
+            <div class="section-number">08</div>
+          </div>
+
+          <p>
+            Le projet <strong>MentorLink</strong> a permis de concevoir une plateforme de mentorat destinée à faciliter la
+            mise en relation entre mentors et mentorés. Cette application vise à améliorer l'accompagnement des étudiants
+            dans leur parcours académique en leur permettant de trouver plus facilement de l'aide selon leurs besoins,
+            leurs compétences et leurs disponibilités.
+          </p>
+          <br>
+          <p>
+            La réalisation de ce projet a permis aux membres du groupe de mettre en pratique leurs connaissances en
+            développement web, en Django, en gestion de base de données, en conception d'architecture logicielle et en
+            travail collaboratif.
+          </p>
+          <br>
+          <p>
+            En perspective, le projet pourrait être amélioré par l'ajout d'un système de matching plus intelligent,
+            éventuellement basé sur l'intelligence artificielle, ainsi que par l'amélioration de l'interface utilisateur
+            et le renforcement de la sécurité.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <strong>PIL1_2526_48</strong> · Projet Web · Rapport de Groupe 48 · Année universitaire 2025-2026
+    </footer>
+  </main>
+</body>
+</html>
+
