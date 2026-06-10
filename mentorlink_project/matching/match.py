@@ -116,3 +116,19 @@ def generer_matches_pour_utilisateur(utilisateur):
 
 
 
+
+
+class ModifierProfilForm(forms.ModelForm):
+    class Meta:
+        model = Utilisateur
+        fields = (
+            'first_name',
+            'last_name',
+            'email',
+            'telephone',
+            'niveau',
+            'filiere',
+            'bio',
+            'photo',
+        )
+
