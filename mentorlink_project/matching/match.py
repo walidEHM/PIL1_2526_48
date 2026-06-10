@@ -119,29 +119,4 @@ def generer_matches_pour_utilisateur(utilisateur):
 
 
 
-@csrf_exempt
-@login_required
-def modifier_profil(request):
-    if request.method == 'POST':
-        form = ModifierProfilForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Profil mis à jour avec succès !")
-        else:
-            html = f"""
-            <form method="post">
-                {form.as_p()}
-                <button type="submit">Enregistrer</button>
-            </form>
-            <p>Erreurs : {form.errors}</p>
-            """
-            return HttpResponse(html)
-    else:
-        form = ModifierProfilForm(instance=request.user)
-        html = f"""
-        <form method="post">
-            {form.as_p()}
-            <button type="submit">Enregistrer</button>
-        </form>
-        """
-        return HttpResponse(html)
+
