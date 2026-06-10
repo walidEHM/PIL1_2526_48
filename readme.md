@@ -131,6 +131,8 @@ PIL1_2526_48/
 │   ├── messaging/
 │   ├── database/
 │   │   └── mentorlink_db.sql
+|   ├── scripts/
+│   │   └── populate_db.py
 │   └── ...
 │
 ├── requirements.txt
