@@ -1,4 +1,4 @@
-from django.contrib.auth.models import BaseUserManager, AbstractUser, UserManager, UnicodeUsernameValidator
+from django.contrib.auth.models import BaseUserManager, AbstractUser, UnicodeUsernameValidator
 from django.db import models
 from django.utils import timezone
 
@@ -97,8 +97,7 @@ class Competence(models.Model):
 
 class UtilisateurCompetence(models.Model):
     idUtilisateur = models.ForeignKey(
-        Utilisateur, on_delete=models.CASCADE, db_column='idUtilisateur',
-        primary_key=True  # ← ajoute ça
+        Utilisateur, on_delete=models.CASCADE, db_column='idUtilisateur'
     )
     idCompetence = models.ForeignKey(
         Competence, on_delete=models.CASCADE, db_column='idCompetence'

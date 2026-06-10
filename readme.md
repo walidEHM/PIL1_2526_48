@@ -57,6 +57,27 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
+### 5. Configurer l'environnement
+
+Depuis `mentorlink_project`, copier le modèle d'environnement puis adapter les valeurs locales :
+
+```bash
+copy .env.example .env
+```
+
+Sous Linux / macOS :
+
+```bash
+cp .env.example .env
+```
+
+Variables importantes :
+
+* `SECRET_KEY` : clé secrète Django à générer pour chaque environnement
+* `DEBUG` : `True` en développement, `False` en production
+* `ALLOWED_HOSTS` : domaines autorisés, séparés par des virgules
+* `REDIS_URL` : recommandé en production pour les WebSockets
+
 ---
 
 ## Base de données
@@ -119,6 +140,21 @@ http://127.0.0.1:8000
 ```
 
 > **Important :** Le projet utilise Django Channels pour la messagerie en temps réel. Il est recommandé de lancer l'application avec Daphne afin d'activer les WebSockets.
+---
+## Vérifications
+
+```bash
+python manage.py check
+python manage.py test
+```
+
+Pour exécuter les tests sans dépendre de MySQL :
+
+```bash
+set DATABASE_URL=sqlite:///test_mentorlink.sqlite3
+python manage.py test
+```
+
 ---
 ### Comptes de test
 

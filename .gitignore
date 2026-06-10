@@ -8,6 +8,17 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Variables locales et secrets
+.env
+.env.*
+!.env.example
+
+# Fichiers générés
+staticfiles/
+media/
+*.sqlite3
+*.log
+
 # VS Code
 .vscode/
 

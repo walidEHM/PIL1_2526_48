@@ -1,11 +1,28 @@
-from django.shortcuts import render
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.http import JsonResponse
-from .models import Match
+from django.shortcuts import redirect, render
+from django.utils import timezone
+from datetime import timedelta
+from .forms import AnnonceForm
+from .models import Annonce, Match
 from .match import generer_matches_pour_utilisateur
 from accounts.models import UtilisateurCompetence
 from django.db.models import Q
 from messaging.models import Message
+
+
+def _matches_a_recalculer(user):
+    dernier_match = Match.objects.filter(
+        Q(idMentor=user) | Q(idMentore=user)
+    ).order_by('-date_modificationMatches').first()
+    if not dernier_match:
+        return True
+
+    delai = timedelta(minutes=settings.MATCH_RECALCULATE_MINUTES)
+    return dernier_match.date_modificationMatches < timezone.now() - delai
+
 
 @login_required
 def dashboard(request):
@@ -30,9 +47,33 @@ def dashboard(request):
 
 
 @login_required
+def annonces(request):
+    if request.method == 'POST':
+        form = AnnonceForm(request.POST)
+        if form.is_valid():
+            annonce = form.save(commit=False)
+            annonce.idUtilisateur = request.user
+            annonce.save()
+            messages.success(request, "Annonce publiée avec succès.")
+            return redirect('matching:annonces')
+        messages.error(request, "Veuillez corriger les informations de l'annonce.")
+    else:
+        form = AnnonceForm()
+
+    annonces_list = Annonce.objects.filter(statutAnnonce='active').select_related(
+        'idUtilisateur', 'idUtilisateur__filiere'
+    )
+    return render(request, 'matching/annonces.html', {
+        'annonces': annonces_list,
+        'form': form,
+    })
+
+
+@login_required
 def get_matches(request):
     user = request.user
-    generer_matches_pour_utilisateur(user)
+    if request.GET.get('refresh') == '1' or _matches_a_recalculer(user):
+        generer_matches_pour_utilisateur(user)
 
     matches = Match.objects.filter(
         Q(idMentor=user) | Q(idMentore=user),

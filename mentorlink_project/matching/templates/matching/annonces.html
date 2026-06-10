@@ -451,7 +451,8 @@
     <section class="publish-section">
       <h2 class="section-title"><span>CrÃ©er une annonce</span></h2>
       
-      <form id="annonceForm" onsubmit="handleFormSubmit(event)">
+      <form id="annonceForm" method="post" action="{% url 'matching:annonces' %}">
+        {% csrf_token %}
         <div class="form-group">
           <label>Je souhaite :</label>
           <div class="segmented-control">
@@ -465,7 +466,7 @@
 
         <div class="form-group">
           <label for="matiere">UnitÃ© d'Enseignement (MatiÃ¨re)</label>
-          <select id="matiere" class="select-custom" required>
+          <select id="matiere" name="matiereAnnonce" class="select-custom" required>
             <option value="" disabled selected>SÃ©lectionnez une matiÃ¨re...</option>
             <option value="Algorithmique & Structures de donnÃ©es">Algorithmique & Structures de donnÃ©es</option>
             <option value="Bases de donnÃ©es & AlgÃ¨bre relationnelle">Bases de donnÃ©es & AlgÃ¨bre relationnelle</option>
@@ -477,43 +478,43 @@
 
         <div class="form-group">
           <label for="format">Format souhaitÃ©</label>
-          <select id="format" class="select-custom" required>
-            <option value="PrÃ©sentiel (IFRI)">PrÃ©sentiel (IFRI)</option>
-            <option value="En ligne (Meet/Discord)">En ligne (Meet/Discord)</option>
-            <option value="Hybride (Les deux)">Hybride (Les deux)</option>
+          <select id="format" name="formatAnnonce" class="select-custom" required>
+            <option value="presentiel">PrÃ©sentiel (IFRI)</option>
+            <option value="en_ligne">En ligne (Meet/Discord)</option>
+            <option value="hybride">Hybride (Les deux)</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="description">PrÃ©cisions (ThÃ¨mes ciblÃ©s, Projet Ã  rÃ©aliser...)</label>
-          <textarea id="description" class="input-custom" rows="4" placeholder="Ex: Disponible pour aider sur les requÃªtes SQL complexes et les jointures avant le contrÃ´le..." required></textarea>
+          <textarea id="description" name="descriptionAnnonce" class="input-custom" rows="4" placeholder="Ex: Disponible pour aider sur les requÃªtes SQL complexes et les jointures avant le contrÃ´le..." required></textarea>
         </div>
 
         <div class="form-group">
           <label>DisponibilitÃ©s de la semaine</label>
           <div class="days-grid">
             <div class="day-checkbox">
-              <input type="checkbox" id="day-lun" value="Lun">
+              <input type="checkbox" id="day-lun" name="jours" value="Lun">
               <label for="day-lun">Lun</label>
             </div>
             <div class="day-checkbox">
-              <input type="checkbox" id="day-mar" value="Mar">
+              <input type="checkbox" id="day-mar" name="jours" value="Mar">
               <label for="day-mar">Mar</label>
             </div>
             <div class="day-checkbox">
-              <input type="checkbox" id="day-mer" value="Mer">
+              <input type="checkbox" id="day-mer" name="jours" value="Mer">
               <label for="day-mer">Mer</label>
             </div>
             <div class="day-checkbox">
-              <input type="checkbox" id="day-jeu" value="Jeu">
+              <input type="checkbox" id="day-jeu" name="jours" value="Jeu">
               <label for="day-jeu">Jeu</label>
             </div>
             <div class="day-checkbox">
-              <input type="checkbox" id="day-ven" value="Ven">
+              <input type="checkbox" id="day-ven" name="jours" value="Ven">
               <label for="day-ven">Ven</label>
             </div>
             <div class="day-checkbox">
-              <input type="checkbox" id="day-sam" value="Sam">
+              <input type="checkbox" id="day-sam" name="jours" value="Sam">
               <label for="day-sam">Sam</label>
             </div>
           </div>
@@ -537,50 +538,39 @@
       </div>
 
       <div class="annonces-list" id="annoncesList">
-        
-        <div class="annonce-card" data-type="offre" data-matiere="Bases de donnÃ©es & AlgÃ¨bre relationnelle">
-          <span class="badge-type offre">Offre</span>
+        {% for annonce in annonces %}
+        <div class="annonce-card" data-type="{{ annonce.typeAnnonce }}" data-matiere="{{ annonce.matiereAnnonce }}">
+          <span class="badge-type {{ annonce.typeAnnonce }}">{{ annonce.get_typeAnnonce_display }}</span>
           <div class="annonce-user">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80" alt="Marie">
+            {% if annonce.idUtilisateur.photo %}
+            <img src="{{ annonce.idUtilisateur.photo.url }}" alt="{{ annonce.idUtilisateur.last_name|default:annonce.idUtilisateur.email }}">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" alt="Profil">
+            {% endif %}
             <div class="user-meta">
-              <h3>Marie Gandonou</h3>
-              <p>Licence IA â€” Niveau 2</p>
+              <h3>{{ annonce.idUtilisateur.last_name }} {{ annonce.idUtilisateur.first_name }}</h3>
+              <p>{{ annonce.idUtilisateur.filiere.nomFiliere|default:"FiliÃ¨re non renseignÃ©e" }} â€” {{ annonce.idUtilisateur.niveau|default:"Niveau non renseignÃ©" }}</p>
             </div>
           </div>
           <div class="annonce-body">
-            <div class="annonce-matiere">Bases de donnÃ©es & AlgÃ¨bre relationnelle</div>
-            <p class="annonce-desc">Je propose des sessions de mise Ã  niveau sur l'algÃ¨bre relationnelle (sÃ©lection, projection, jointures) et l'Ã©criture de requÃªtes SQL complexes. IdÃ©al pour prÃ©parer l'examen.</p>
+            <div class="annonce-matiere">{{ annonce.matiereAnnonce }}</div>
+            <p class="annonce-desc">{{ annonce.descriptionAnnonce }}</p>
           </div>
           <div class="annonce-footer">
             <div class="annonce-details">
-              <div class="detail-item">Format: <span>PrÃ©sentiel (IFRI)</span></div>
-              <div class="detail-item">Jours: <span>Mer, Jeu, Sam</span></div>
+              <div class="detail-item">Format: <span>{{ annonce.get_formatAnnonce_display }}</span></div>
+              <div class="detail-item">Jours: <span>{{ annonce.joursAnnonce|default:"Ã€ dÃ©finir" }}</span></div>
             </div>
-            <button class="btn-respond" onclick="contactUser('Marie Gandonou')">Contacter</button>
+            {% if annonce.idUtilisateur_id == request.user.id %}
+            <button class="btn-respond" style="background: var(--border); color: var(--muted); cursor: not-allowed;" disabled>Votre annonce</button>
+            {% else %}
+            <a class="btn-respond" href="{% url 'messaging:demarrer_conversation' annonce.idUtilisateur_id %}">Contacter</a>
+            {% endif %}
           </div>
         </div>
-
-        <div class="annonce-card" data-type="demande" data-matiere="Programmation Python">
-          <span class="badge-type demande">Demande</span>
-          <div class="annonce-user">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="Koffi">
-            <div class="user-meta">
-              <h3>Koffi Atta</h3>
-              <p>Licence GL â€” Niveau 1</p>
-            </div>
-          </div>
-          <div class="annonce-body">
-            <div class="annonce-matiere">Programmation Python</div>
-            <p class="annonce-desc">Besoin d'aide urgent sur la gestion des fichiers en Python et la manipulation des listes/dictionnaires pour le projet de fin de semestre. Merci d'avance !</p>
-          </div>
-          <div class="annonce-footer">
-            <div class="annonce-details">
-              <div class="detail-item">Format: <span>En ligne</span></div>
-              <div class="detail-item">Jours: <span>Lun, Ven</span></div>
-            </div>
-            <button class="btn-respond" onclick="contactUser('Koffi Atta')">Contacter</button>
-          </div>
-        </div>
+        {% empty %}
+        <p>Aucune annonce active pour le moment. Publiez la premiÃ¨re annonce.</p>
+        {% endfor %}
 
       </div>
     </section>
@@ -588,60 +578,6 @@
   </main>
 
   <script>
-    // Soumission du formulaire de publication
-    function handleFormSubmit(event) {
-      event.preventDefault();
-
-      // RÃ©cupÃ©ration des valeurs du formulaire
-      const type = document.querySelector('name[typeAnnonce]:checked')?.value || 'offre';
-      const matiere = document.getElementById('matiere').value;
-      const format = document.getElementById('format').value;
-      const description = document.getElementById('description').value;
-      
-      // RÃ©cupÃ©ration des jours cochÃ©s
-      const checkedDays = [];
-      document.querySelectorAll('.days-grid input:checked').forEach(cb => {
-        checkedDays.push(cb.value);
-      });
-      const daysStr = checkedDays.length > 0 ? checkedDays.join(', ') : 'Ã€ dÃ©finir';
-
-      // CrÃ©ation graphique d'une nouvelle carte d'annonce (Ajout dynamique au flux)
-      const feed = document.getElementById('annoncesList');
-      const card = document.createElement('div');
-      card.className = 'annonce-card';
-      card.setAttribute('data-type', type);
-      card.setAttribute('data-matiere', matiere);
-
-      card.innerHTML = `
-        <span class="badge-type ${type}">${type}</span>
-        <div class="annonce-user">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" alt="Moi">
-          <div class="user-meta">
-            <h3>Jean Doe</h3>
-            <p>Licence GL â€” Niveau 1 (Moi)</p>
-          </div>
-        </div>
-        <div class="annonce-body">
-          <div class="annonce-matiere">${matiere}</div>
-          <p class="annonce-desc">${escapeHTML(description)}</p>
-        </div>
-        <div class="annonce-footer">
-          <div class="annonce-details">
-            <div class="detail-item">Format: <span>${format}</span></div>
-            <div class="detail-item">Jours: <span>${daysStr}</span></div>
-          </div>
-          <button class="btn-respond" style="background: var(--border); color: var(--muted); cursor: not-allowed;" disabled>Votre annonce</button>
-        </div>
-      `;
-
-      // InsÃ©rer au tout dÃ©but du flux d'annonces
-      feed.insertBefore(card, feed.firstChild);
-
-      // RÃ©initialiser le formulaire
-      document.getElementById('annonceForm').reset();
-      alert("Votre annonce a Ã©tÃ© publiÃ©e avec succÃ¨s sur IFRI MentorLink !");
-    }
-
     // Algorithme de filtrage en temps rÃ©el
     function filterAnnonces() {
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -664,18 +600,6 @@
       });
     }
 
-    // Redirection / Interaction simulÃ©e pour contacter
-    function contactUser(name) {
-      alert(`Redirection vers la messagerie instantanÃ©e pour initier la discussion avec ${name}...`);
-      // Exemple de liaison logique : window.location.href = 'chat.html?user=' + encodeURIComponent(name);
-    }
-
-    // SÃ©curisation anti-XSS pour le rendu de texte utilisateur
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
-    }
   </script>
 </body>
 </html>

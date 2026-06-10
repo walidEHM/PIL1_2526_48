@@ -1,13 +1,14 @@
 ﻿from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 from django.db.models import Max, F, Q
 from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
 from .models import Conversation, Message
-from django.apps import apps
+from matching.models import Annonce, Match
 
 User = get_user_model()
 
@@ -105,17 +106,24 @@ def demarrer_conversation(request, user_id):
         Q(idMatches__idMentor=autre_user, idMatches__idMentore=request.user)
     ).first()
     if not conversation:
-        Match = apps.get_model('matching', 'Match')
         match = Match.objects.filter(
             Q(idMentor=request.user, idMentore=autre_user) |
             Q(idMentor=autre_user, idMentore=request.user)
         ).first()
         if not match:
+            annonce_active = Annonce.objects.filter(
+                idUtilisateur=autre_user,
+                statutAnnonce='active',
+            ).exists()
+            if not annonce_active:
+                messages.error(request, "Aucun match ou annonce active ne permet d'ouvrir cette conversation.")
+                return redirect('matching:dashboard')
+
             match = Match.objects.create(
-                idMentor=request.user,
-                idMentore=autre_user,
+                idMentor=autre_user,
+                idMentore=request.user,
                 score_compatibiliteMatch=0.0,
-                statutMatches='nouveau'
+                statutMatches='annonce'
             )
         conversation = Conversation.objects.create(idMatches=match)
     return redirect('messaging:detail_conversation', conversation_id=conversation.idConversation)
