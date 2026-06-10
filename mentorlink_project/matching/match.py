@@ -116,21 +116,3 @@ def generer_matches_pour_utilisateur(utilisateur):
 
 
 
-class ModifierProfilForm(forms.ModelForm):
-    idFiliere = forms.ModelChoiceField(queryset=Filiere.objects.all(), label="Filière")
-
-    class Meta:
-        model = Utilisateur
-        fields = (
-            'nomUtilisateur',
-            'prenomUtilisateur',
-            'telephoneUtilisateur',
-            'niveauUtilisateur',
-            'idFiliere',
-            'bioUtilisateur',
-            'centres_interetUtilisateur',
-            'photoUtilisateur',
-        )
-
-
-
