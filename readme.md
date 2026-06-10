@@ -61,46 +61,41 @@ pip install -r requirements.txt
 
 ## Base de données
 
-Une sauvegarde de la base de données est fournie dans :
-
-```text
-mentorlink_project/database/mentorlink_db.sql
-```
-
-### Importation de la base de données
-
 Créer une base de données MySQL :
 
 ```sql
 CREATE DATABASE mentorlink_db;
 ```
 
-Puis importer le fichier SQL.
-
-#### Avec MySQL
-
-```bash
-mysql -u root -p mentorlink_db < mentorlink_project/database/mentorlink_db.sql
-```
-
-#### Avec phpMyAdmin
-
-1. Créer une base de données nommée `mentorlink_db`
-2. Cliquer sur **Importer**
-3. Sélectionner le fichier :
-
-```text
-mentorlink_project/database/mentorlink_db.sql
-```
-
-4. Cliquer sur **Exécuter**
-
-
-Si vous préférez partir d'une base vide, vous pouvez exécuter :
+Depuis le dossier `mentorlink_project`, exécuter les migrations :
 
 ```bash
 python manage.py migrate
 ```
+
+### Génération de données fictives
+
+Pour générer des données de démonstration (utilisateurs, compétences, disponibilités et matches), exécuter :
+
+```bash
+cd scripts
+python populate_db.py
+```
+
+Le script crée automatiquement :
+
+* Des mentors et mentorés de démonstration
+* Des compétences techniques
+* Des disponibilités
+* Des correspondances mentor/mentoré
+* Des profils prêts pour les tests
+
+> **Remarque :** Exécutez ce script uniquement sur une base de développement afin d'éviter les doublons de données.
+
+### Comptes de test
+
+Après l'exécution de `populate_db.py`, plusieurs utilisateurs de démonstration sont créés afin de tester les fonctionnalités de l'application.
+
 ---
 
 ## Lancement du projet
